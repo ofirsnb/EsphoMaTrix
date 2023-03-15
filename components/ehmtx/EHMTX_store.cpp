@@ -32,7 +32,6 @@ namespace esphome
                 return screen;
             }
         }
-        // Default to first screen. Is this intended?
         return this->slots[0];
     }
 
@@ -49,6 +48,7 @@ namespace esphome
         if (icon_id < MAXICONS)
         {
             this->force_screen = icon_id;
+            this->move_next();
         }
     }
 
@@ -75,6 +75,7 @@ namespace esphome
                 EHMTX_screen *screen = this->slots[slot];
                 if (screen->active())
                 {
+                    screen->reset_shiftx();
                     this->active_slot = slot;
                     return true;
                 }
@@ -87,6 +88,7 @@ namespace esphome
             EHMTX_screen *screen = this->slots[slot];
             if (screen->active())
             {
+                screen->reset_shiftx();
                 this->active_slot = slot;
                 return true;
             }
@@ -98,6 +100,7 @@ namespace esphome
             EHMTX_screen *screen = this->slots[slot];
             if (screen->active())
             {
+                screen->reset_shiftx();
                 this->active_slot = slot;
                 return true;
             }
@@ -111,6 +114,11 @@ namespace esphome
     EHMTX_screen *EHMTX_store::current()
     {
         return this->slots[this->active_slot];
+    }
+
+    void EHMTX_store::hold_current(uint _sec)
+    {
+        this->slots[this->active_slot]->hold_slot(_sec);
     }
 
     uint8_t EHMTX_store::count_active_screens()
@@ -138,7 +146,7 @@ namespace esphome
             {
                 EHMTX_screen *screen = this->slots[i];
                 int td = screen->endtime - ts;
-                ESP_LOGI(TAG, "status slot %d icon %d text: %s alarm: %d end: %d sec", i, screen->icon, screen->text.c_str(), screen->alarm, td);
+                ESP_LOGI(TAG, "status slot %d icon %d text: %s alarm: %d dd: %d sec end: %d sec", i, screen->icon, screen->text.c_str(), screen->alarm, screen->display_duration, td);
             }
         }
     }
