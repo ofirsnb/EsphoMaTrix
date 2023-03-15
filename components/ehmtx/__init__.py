@@ -18,7 +18,7 @@ _LOGGER = logging.getLogger(__name__)
 DEPENDENCIES = ["display", "light", "api"]
 AUTO_LOAD = ["ehmtx"]
 IMAGE_TYPE_RGB565 = 4
-MAXFRAMES = 20
+MAXFRAMES = 50
 MAXICONS = 80
 ICONWIDTH = 8
 ICONHEIGHT = 8
@@ -455,7 +455,15 @@ CODEOWNERS = ["@lubeda"]
 
 async def to_code(config):
 
-    from PIL import Image
+    from PIL import Image, ImageSequence
+    import os
+
+    def openImageFile(path):
+        try:
+            return Image.open(path)
+        except Exception as e:
+            raise core.EsphomeError(f" ICONS: Could not load image file {path}: {e}")
+
     var = cg.new_Pvariable(config[CONF_ID])
     html_string = F"<HTML><HEAD><TITLE>{CORE.config_path}</TITLE></HEAD>"
     html_string += '''\
@@ -466,10 +474,7 @@ async def to_code(config):
                 
         if CONF_FILE in conf:
             path = CORE.relative_config_path(conf[CONF_FILE])
-            try:
-                image = Image.open(path)
-            except Exception as e:
-                raise core.EsphomeError(f" ICONS: Could not load image file {path}: {e}")
+            image = openImageFile(path)
         elif CONF_LAMEID in conf:
             r = requests.get("https://developer.lametric.com/content/apps/icon_thumbs/" + conf[CONF_LAMEID], timeout=4.0)
             if r.status_code != requests.codes.ok:
@@ -481,17 +486,31 @@ async def to_code(config):
                 raise core.EsphomeError(f" ICONS: Could not download image file {conf[CONF_URL]}: {conf[CONF_ID]}")
             image = Image.open(io.BytesIO(r.content))
         
-        width, height = image.size
-        
-        if (width != ICONWIDTH) or (height != ICONHEIGHT):
-            image = image.resize(ICONSIZE)
-            width, height = image.size
-
         if hasattr(image, 'n_frames'):
             frames = min(image.n_frames, MAXFRAMES)
         else:
             frames = 1
             
+        width, height = image.size
+        
+        if (width != ICONWIDTH) or (height != ICONHEIGHT):
+            if frames > 1:
+                imgFrames = ImageSequence.Iterator(image)
+                resizedFrames = []
+                for frame in imgFrames:
+                    frame = frame.resize(ICONSIZE)
+                    resizedFrames.append(frame)
+                resizedFilePath = f'{path}.resized.gif'
+                firstResizedFrame = image.resize(ICONSIZE)
+                firstResizedFrame.save(resizedFilePath, save_all=True, append_images=resizedFrames[1:], loop=0) # The first frame [0] is broken,  therefore starting from [1].
+                # frames = frames-1
+                image = openImageFile(resizedFilePath)
+                os.remove(resizedFilePath)
+                width, height = image.size
+            else:
+                image = image.resize(ICONSIZE)
+                width, height = image.size
+
         if (conf[CONF_DURATION] == 0):
             try:
                 duration =  image.info['duration']         
