@@ -269,7 +269,7 @@ namespace esphome
           this->display->get_text_bounds(0, 0, this->icons[i]->name.c_str(), this->font, display::TextAlign::LEFT, &x, &y, &w, &h);
           this->icon_screen->set_text(this->icons[i]->name, i, w, 1);
           ESP_LOGD(TAG, "show all icons icon: %d name: %s", i, this->icons[i]->name.c_str());
-          char* input2 = (char *) this->icons[i]->data_start;
+          char* input2 = (char *) this->icons[i]->data_start_;
           ESP_LOGD(TAG, input2);
           // ESP_LOGD(TAG, "data_start %d", this->icons[i]->data_start);
         }
