@@ -516,7 +516,8 @@ async def to_code(config):
             
         width, height = image.size
         
-        if ((width != 4*ICONWIDTH) or (width != ICONWIDTH)) and (height != ICONHEIGHT):
+        # if ((width != 4*ICONWIDTH) or (width != ICONWIDTH)) and (height != ICONHEIGHT):
+        if (width != ICONWIDTH and height != ICONHEIGHT) and width != 4*ICONWIDTH:
             if frames > 1:
                 imgFrames = ImageSequence.Iterator(image)
                 resizedFrames = []
