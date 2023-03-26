@@ -477,11 +477,12 @@ async def to_code(config):
             raise core.EsphomeError(f" ICONS: Could not load image file {path}: {e}")
 
 
-    def thumbnails(frames):
-        for frame in frames:
-            thumbnail = frame.copy()
-            thumbnail.thumbnail((32,8), Image.ANTIALIAS)
-            yield thumbnail
+    # not in use from lubeda-main
+    # def thumbnails(frames):
+    #     for frame in frames:
+    #         thumbnail = frame.copy()
+    #         thumbnail.thumbnail((32,8), Image.ANTIALIAS)
+    #         yield thumbnail
 
     var = cg.new_Pvariable(config[CONF_ID])
     html_string = F"<HTML><HEAD><TITLE>{CORE.config_path}</TITLE></HEAD>"
