@@ -590,6 +590,10 @@ async def to_code(config):
 
         prog_arr = cg.progmem_array(conf[CONF_RAW_DATA_ID], rhs)
 
+        print(data)
+        print('---')
+        print(rhs)
+
         cg.new_Pvariable(
             conf[CONF_ID],
             prog_arr,
