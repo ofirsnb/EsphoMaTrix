@@ -103,7 +103,7 @@ namespace esphome
     else
     {
       this->config_->display->line(8, 0, 8, 7, esphome::display::COLOR_OFF);
-      ESP_LOGD(TAG, this->config_->icons[this->icon]);
+      // ESP_LOGD(TAG, this->config_->icons[this->icon]);
       // this->config_->display->image(0, 0, this->config_->icons[this->icon]);
     }
   }
