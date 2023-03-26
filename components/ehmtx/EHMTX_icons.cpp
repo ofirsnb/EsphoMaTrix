@@ -3,7 +3,7 @@
 namespace esphome
 {
 
-  EHMTX_Icon::EHMTX_Icon(const uint8_t *data_start, int width, int height, uint32_t animation_frame_count, display::ImageType type, std::string icon_name, bool revers, uint16_t frame_duration)
+  EHMTX_Icon::EHMTX_Icon(const uint8_t data_start, int width, int height, uint32_t animation_frame_count, display::ImageType type, std::string icon_name, bool revers, uint16_t frame_duration)
       : Animation(data_start, width, height, animation_frame_count, type)
   {
     ESP_LOGD(TAG, "data_start %d", data_start);
