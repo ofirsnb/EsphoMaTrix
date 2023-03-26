@@ -541,6 +541,8 @@ async def to_code(config):
                 duration =  image.info['duration']         
             except:
                 duration = config[CONF_ANIMINTERVALL]
+        else:
+            duration = conf[CONF_DURATION]
 
         # else:
         #     if (conf[CONF_DURATION] == 0):
